@@ -29,6 +29,9 @@ public class Movement : MonoBehaviour
     // Start is called before the first frame update
     async void Start()
     {
+        UpperHandle upperHandle =  GameObject.Find("Panto").GetComponent<UpperHandle>();
+        await upperHandle.SwitchTo(gameObject,100f); 
+        
        
     }
 
@@ -38,7 +41,6 @@ public class Movement : MonoBehaviour
     async void Update()
     {
         UpperHandle upperHandle =  GameObject.Find("Panto").GetComponent<UpperHandle>();
-        await upperHandle.SwitchTo(gameObject,100f); 
 
         Vector3 handlePosition = upperHandle.GetPosition();
         float zPosition = handlePosition.z;
