@@ -9,7 +9,7 @@ public class Movement : MonoBehaviour
 {
     public Vector3 rotationPoint;
     private float previousTime;
-    public float fallTime = 0.8f;
+    public float fallTime = 1.0f;
     public static int height = 20;
     public static int width = 10;
     private static Transform[,] grid = new Transform[width, height];
@@ -31,7 +31,7 @@ public class Movement : MonoBehaviour
     {
         UpperHandle upperHandle =  GameObject.Find("Panto").GetComponent<UpperHandle>();
         await upperHandle.SwitchTo(gameObject,100f); 
-        
+
        
     }
 
@@ -71,10 +71,10 @@ public class Movement : MonoBehaviour
                     transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0, -1, 0), 90);
         }*/
 
-        if(Time.time - previousTime > ((zPosition - lastPosition > fallmove) ? fallTime / 10 : fallTime))
+        //if(Time.time - previousTime > ((zPosition - lastPosition > fallmove) ? fallTime / 10 : fallTime))
+        if(Time.time - previousTime > (Input.GetKey(KeyCode.DownArrow) ? fallTime / 10 : fallTime))
         {
             transform.position += new Vector3 (0, 0, -1);
-            //fall.Play();
             FindObjectOfType<SFX>().Fall();
 
             if(!ValidMove())

@@ -16,9 +16,9 @@ public class Spawn : MonoBehaviour
     {   
         speechOut = new SpeechOut();
         LowerHandle lowerHandle;
-        NewPiece(0);
         await GameObject.Find("Panto").GetComponent<LowerHandle>().SwitchTo(itPosition);
-        speechOut.Speak("Move the handle towards yourself to fill the hole and clear the line.");
+        await speechOut.Speak("Move the upper handle towards yourself to fill the hole and clear the line.");
+        NewPiece(0);
     }
 
     // Update is called once per frame
