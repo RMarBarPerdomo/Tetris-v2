@@ -19,19 +19,18 @@ public class Movement : MonoBehaviour
     Vector3 handlePosition;
     float zPosition;
     float lastPosition;
-    public int fallmove = 25;
-    //public int leftMove = -25;
-    //public int rightMove = 25;
-    
-    //public AudioSource clear;
-    //public AudioSource fall;
+    public static int fallMove = 1;
+    public static int leftMove = -1;
+    public static int rightMove = 1;
+    public static bool feel_finished;
 
     // Start is called before the first frame update
     async void Start()
     {
         UpperHandle upperHandle =  GameObject.Find("Panto").GetComponent<UpperHandle>();
-        await upperHandle.SwitchTo(gameObject,100f); 
-
+        //await upperHandle.SwitchTo(gameObject,100f); 
+        FindObjectOfType<Feel>().SetTag(tag);
+        feel_finished = FindObjectOfType<Feel>().GetFeel();
        
     }
 
@@ -40,55 +39,80 @@ public class Movement : MonoBehaviour
     // Update is called once per frame
     async void Update()
     {
-        UpperHandle upperHandle =  GameObject.Find("Panto").GetComponent<UpperHandle>();
-
-        Vector3 handlePosition = upperHandle.GetPosition();
-        float zPosition = handlePosition.z;
-        float xPosition = handlePosition.x;
-        float lastZPosition = 0;
-        float lastXPosition = 0;
-        
-        
-        // Movements not needed for this version of level 1, do not delete
-        /* if(xPosition - lastXPosition < leftMove)
+        if (!feel_finished)
         {
-            transform.position += new Vector3(-1, 0, 0);
-            if(!ValidMove())
-                transform.position += new Vector3(1, 0, 0);
-            lastXPosition = handlePosition;
+            await FindObjectOfType<Feel>().feel_outline();
         }
-        else if(xPosition - lastXPosition > rightMove)
-        {
-            transform.position += new Vector3(1, 0, 0);
-            if(!ValidMove())
-                transform.position += new Vector3(-1, 0, 0);
-            lastXPosition = handlePosition;
-        }
-        else if(Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0, 1, 0), 90);
-                if(!ValidMove())
-                    transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0, -1, 0), 90);
-        }*/
 
-        //if(Time.time - previousTime > ((zPosition - lastPosition > fallmove) ? fallTime / 10 : fallTime))
-        if(Time.time - previousTime > (Input.GetKey(KeyCode.DownArrow) ? fallTime / 10 : fallTime))
+        if(feel_finished)
         {
-            transform.position += new Vector3 (0, 0, -1);
-            FindObjectOfType<SFX>().Fall();
+            
+            UpperHandle upperHandle =  GameObject.Find("Panto").GetComponent<UpperHandle>();
 
-            if(!ValidMove())
+            Vector3 handlePosition = upperHandle.GetPosition();
+            float zPosition = handlePosition.z;
+            float xPosition = handlePosition.x;
+            float meRotation = upperHandle.GetRotation();
+            float lastRotation = 0;
+            float lastZPosition = 0;
+            float lastXPosition = 0;
+
+            
+            
+            // Movements not needed for this version of level 1, do not delete
+            if(xPosition - lastXPosition < leftMove)
             {
-                transform.position += new Vector3(0, 0, 1);
-                this.enabled = false;
-                AddToGrid();
-                CheckLines();
-                //FindObjectOfType<Spawn>().NewPiece(pieceNumber);
+                transform.position += new Vector3(-1, 0, 0);
+                if(!ValidMove())
+                    transform.position += new Vector3(1, 0, 0);
+                lastXPosition = xPosition;
+            }
+            else if(xPosition - lastXPosition > rightMove)
+            {
+                transform.position += new Vector3(1, 0, 0);
+                if(!ValidMove())
+                    transform.position += new Vector3(-1, 0, 0);
+                lastXPosition = xPosition;
+            }
+            //else if(Input.GetKeyDown(KeyCode.UpArrow))
+            else if(meRotation - lastRotation > 90)
+            {
+                transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0, 1, 0), 90);
+                    if(!ValidMove())
+                        transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0, -1, 0), 90);
+                lastRotation = meRotation;
+            }
+            else if(meRotation - lastRotation < -90)
+            {
+                transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0, 1, 0), -90);
+                    if(!ValidMove())
+                        transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0, -1, 0), -90);
+                lastRotation = meRotation;
             }
 
-            previousTime = Time.time;
-            lastPosition = handlePosition.z;
+            
+            //if(Time.time - previousTime > (Input.GetKey(KeyCode.DownArrow) ? fallTime / 10 : fallTime))
+            //if(Time.time - previousTime > ((zPosition - lastZPosition > fallmove) ? fallTime / 10 : fallTime))
+            //else if(zPosition - lastZPosition > fallMove)
+            if (Input.GetKey(KeyCode.DownArrow))
+            {
+                transform.position += new Vector3 (0, 0, -1);
+                FindObjectOfType<SFX>().Fall();
+
+                if(!ValidMove())
+                {
+                    transform.position += new Vector3(0, 0, 1);
+                    this.enabled = false;
+                    AddToGrid();
+                    CheckLines();
+                    FindObjectOfType<Spawn>().NewPiece();
+                }
+
+                previousTime = Time.time;
+                lastZPosition = zPosition;
+            }
         }
+        
 
     }
 

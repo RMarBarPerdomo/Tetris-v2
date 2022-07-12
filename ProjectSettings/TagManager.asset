@@ -3,7 +3,9 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - l_shape
+  - l_shape_child
   layers:
   - Default
   - TransparentFX
