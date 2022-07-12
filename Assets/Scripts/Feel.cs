@@ -23,12 +23,8 @@ public class Feel : MonoBehaviour
     //public AudioSource fall;
 
     // Start is called before the first frame update
-    async void Start()
-    {
-        outline = GameObject.FindGameObjectsWithTag(tag_string + "_child");
-        lehandle = GameObject.FindGameObjectWithTag("MeHandle");
-        await upperHandle.SwitchTo(outline[0]);
-    }
+
+    
 
 
     // Update is called once per frame
@@ -43,14 +39,17 @@ public class Feel : MonoBehaviour
         yield return new WaitForSeconds(4);
     }
 
-    static async public Task feel_outline()
+     async public Task feel_outline()
     {
+        outline = GameObject.FindGameObjectsWithTag(tag_string + "_child");
+        lehandle = GameObject.FindGameObjectWithTag("MeHandle");
+        await upperHandle.SwitchTo(outline[0]);
 
-        float dist = Vector3.Distance(outline[Feel.CurrentNode].transform.position, lehandle.transform.position);
+        float dist = Vector3.Distance(outline[CurrentNode].transform.position, lehandle.transform.position);
 
         if (dist > threshold)
         {
-            await upperHandle.SwitchTo(outline[Feel.CurrentNode]); //= Vector3.Lerp(startPosition, CurrentPositionHolder, Timer);
+            await upperHandle.SwitchTo(outline[CurrentNode]); //= Vector3.Lerp(startPosition, CurrentPositionHolder, Timer);
         }
         else
         {
@@ -69,21 +68,22 @@ public class Feel : MonoBehaviour
 
     }
 
-    async static public void SetFeelOutLine_true()
+      public void SetFeelOutLine_true()
     {
         feel_finished = true;
     }
-    async static public void SetFeelOutLine_false()
+      public void SetFeelOutLine_false()
     {
+        print("hello");
         feel_finished = false;
     }
 
-    static public void SetTag(string t)
+    public void SetTag(string t)
     {
         tag_string = t;
     }
 
-    static public bool  GetFeel(){
+     public bool GetFeel(){
         return feel_finished;
     }
 

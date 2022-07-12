@@ -32,7 +32,8 @@ public class Spawn : MonoBehaviour
     // Update is called once per frame
     public void NewPiece()
     {   
-            await FindObjectOfType<Feel>().SetFeelOutLine_false();
+            FindObjectOfType<Feel>().SetFeelOutLine_false();
+            print("hello");
             Instantiate(Pieces[0], transform.position, Quaternion.identity);
             //Random.Range(0, Pieces.Length)
     }
