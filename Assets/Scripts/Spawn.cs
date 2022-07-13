@@ -15,12 +15,12 @@ public class Spawn : MonoBehaviour
     // Start is called before the first frame update
     async void Start()
     {   
-        pantoColliders = GameObject.FindObjectsOfType<PantoCollider>();
+        /*pantoColliders = GameObject.FindObjectsOfType<PantoCollider>();
         foreach (PantoCollider collider in pantoColliders)
         {
             collider.CreateObstacle();
             collider.Enable();
-        }
+        }*/
 
         speechOut = new SpeechOut();
         LowerHandle lowerHandle;
@@ -32,8 +32,8 @@ public class Spawn : MonoBehaviour
     // Update is called once per frame
     public void NewPiece()
     {   
-            FindObjectOfType<Feel>().SetFeelOutLine_false();
-            print("hello");
+            //FindObjectOfType<Feel>().SetFeelOutLine_false();
+            //print("hello");
             Instantiate(Pieces[0], transform.position, Quaternion.identity);
             //Random.Range(0, Pieces.Length)
     }

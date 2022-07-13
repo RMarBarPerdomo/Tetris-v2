@@ -23,14 +23,17 @@ public class Movement : MonoBehaviour
     public static int leftMove = -1;
     public static int rightMove = 1;
     public static bool feel_finished;
+    float lastRotation = 0;
+    float lastZPosition = 0;
+    float lastXPosition = 0;
 
     // Start is called before the first frame update
     async void Start()
     {
         UpperHandle upperHandle =  GameObject.Find("Panto").GetComponent<UpperHandle>();
         //await upperHandle.SwitchTo(gameObject,100f); 
-        FindObjectOfType<Feel>().SetTag(tag);
-        feel_finished = FindObjectOfType<Feel>().GetFeel();
+        //FindObjectOfType<Feel>().SetTag(tag);
+        //feel_finished = FindObjectOfType<Feel>().GetFeel();
        
     }
 
@@ -39,13 +42,13 @@ public class Movement : MonoBehaviour
     // Update is called once per frame
     async void Update()
     {
-        if (!feel_finished)
+        /*if (!feel_finished)
         {
             await FindObjectOfType<Feel>().feel_outline();
-        }
+        }*/
 
-        if(feel_finished)
-        {
+        //if(feel_finished)
+        //{
             
             UpperHandle upperHandle =  GameObject.Find("Panto").GetComponent<UpperHandle>();
 
@@ -53,9 +56,6 @@ public class Movement : MonoBehaviour
             float zPosition = handlePosition.z;
             float xPosition = handlePosition.x;
             float meRotation = upperHandle.GetRotation();
-            float lastRotation = 0;
-            float lastZPosition = 0;
-            float lastXPosition = 0;
 
             
             
@@ -111,7 +111,7 @@ public class Movement : MonoBehaviour
                 previousTime = Time.time;
                 lastZPosition = zPosition;
             }
-        }
+        //}
         
 
     }
