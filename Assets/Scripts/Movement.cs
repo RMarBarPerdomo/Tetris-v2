@@ -30,11 +30,9 @@ public class Movement : MonoBehaviour
     // Start is called before the first frame update
     async void Start()
     {
-        UpperHandle upperHandle =  GameObject.Find("Panto").GetComponent<UpperHandle>();
-        //await upperHandle.SwitchTo(gameObject,100f); 
-        //FindObjectOfType<Feel>().SetTag(tag);
-        //feel_finished = FindObjectOfType<Feel>().GetFeel();
-       
+        UpperHandle upperHandle =  GameObject.Find("Panto").GetComponent<UpperHandle>();   
+        FindObjectOfType<Feel>().SetTag(gameObject.tag);
+        feel_finished = FindObjectOfType<Feel>().GetFeel();
     }
 
 
@@ -42,13 +40,14 @@ public class Movement : MonoBehaviour
     // Update is called once per frame
     async void Update()
     {
-        /*if (!feel_finished)
+        
+        if (!feel_finished)
         {
             await FindObjectOfType<Feel>().feel_outline();
-        }*/
+        }
 
-        //if(feel_finished)
-        //{
+        if(feel_finished)
+        {
             
             UpperHandle upperHandle =  GameObject.Find("Panto").GetComponent<UpperHandle>();
 
@@ -94,7 +93,7 @@ public class Movement : MonoBehaviour
             //if(Time.time - previousTime > (Input.GetKey(KeyCode.DownArrow) ? fallTime / 10 : fallTime))
             //if(Time.time - previousTime > ((zPosition - lastZPosition > fallmove) ? fallTime / 10 : fallTime))
             //else if(zPosition - lastZPosition > fallMove)
-            if (Input.GetKey(KeyCode.DownArrow))
+            if (zPosition - lastZPosition > rightMove)
             {
                 transform.position += new Vector3 (0, 0, -1);
                 FindObjectOfType<SFX>().Fall();
@@ -111,7 +110,7 @@ public class Movement : MonoBehaviour
                 previousTime = Time.time;
                 lastZPosition = zPosition;
             }
-        //}
+        }
         
 
     }

@@ -34,14 +34,12 @@ public class Feel : MonoBehaviour
         await speechOut.Speak("now feel how the block is moving");
     }
 
-    IEnumerator timer()
-    {
-        yield return new WaitForSeconds(4);
-    }
 
      async public Task feel_outline()
     {
-        outline = GameObject.FindGameObjectsWithTag(tag_string + "_child");
+        string news = tag_string + "_child";
+        outline = GameObject.FindGameObjectsWithTag(news);
+        print(outline[0].tag);
         lehandle = GameObject.FindGameObjectWithTag("MeHandle");
         await upperHandle.SwitchTo(outline[0]);
 
@@ -68,13 +66,12 @@ public class Feel : MonoBehaviour
 
     }
 
-      public void SetFeelOutLine_true()
+    public void SetFeelOutLine_true()
     {
         feel_finished = true;
     }
       public void SetFeelOutLine_false()
     {
-        print("hello");
         feel_finished = false;
     }
 
@@ -83,7 +80,7 @@ public class Feel : MonoBehaviour
         tag_string = t;
     }
 
-     public bool GetFeel(){
+    public bool GetFeel(){
         return feel_finished;
     }
 
