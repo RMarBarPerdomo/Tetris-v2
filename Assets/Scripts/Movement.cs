@@ -93,8 +93,8 @@ public class Movement : MonoBehaviour
                 lastRotation = meRotation;
             }
 
-            //if(Time.time - previousTime < ((zPosition - lastZPosition < fallMove) ? fallTime / 10 : fallTime))
-            if(zPosition - lastZPosition < fallMove)
+            if(Time.time - previousTime > ((zPosition - lastZPosition < fallMove) ? fallTime / 10 : fallTime))
+            //if(zPosition - lastZPosition < fallMove)
             {
                 transform.position += new Vector3 (0, 0, -1);
                 FindObjectOfType<SFX>().Fall();
@@ -110,6 +110,7 @@ public class Movement : MonoBehaviour
 
                 //previousTime = Time.time;
                 lastZPosition = zPosition;
+                previousTime = Time.time;
             }
 
         }
