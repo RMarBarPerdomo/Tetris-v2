@@ -56,11 +56,14 @@ public class Feel : MonoBehaviour
             }
             else
             {
+                if(!feel_finished) 
+                    OnTriggerEnter();
                 feel_finished = true;
-                OnTriggerEnter();
             }
 
         }
+
+        upperHandle.Free();
 
     }
 

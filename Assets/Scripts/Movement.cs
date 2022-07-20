@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 public class Movement : MonoBehaviour
 {
     public Vector3 rotationPoint;
-    private float previousTime;
-    public float fallTime = 1.0f;
+    private float previousTime = 0;
+    public float fallTime = 5.0f;
     public static int height = 20;
     public static int width = 10;
     private static Transform[,] grid = new Transform[width, height];
@@ -17,14 +17,12 @@ public class Movement : MonoBehaviour
     private SpeechOut speechOut;
     private bool gameStarted;
     Vector3 handlePosition;
-    float zPosition;
-    float lastPosition;
-    public static int fallMove = 1;
+    public static int fallMove = -1;
     public static int leftMove = -1;
     public static int rightMove = 1;
     public static bool feel_finished;
     float lastRotation = 0;
-    float lastZPosition = 0;
+    float lastZPosition = 15;
     float lastXPosition = 0;
 
     // Start is called before the first frame update
@@ -33,6 +31,7 @@ public class Movement : MonoBehaviour
         UpperHandle upperHandle =  GameObject.Find("Panto").GetComponent<UpperHandle>();   
         FindObjectOfType<Feel>().SetTag(gameObject.tag);
         feel_finished = FindObjectOfType<Feel>().GetFeel();
+        lastZPosition = 16;
     }
 
 
@@ -44,6 +43,7 @@ public class Movement : MonoBehaviour
         if (!feel_finished)
         {
             await FindObjectOfType<Feel>().feel_outline();
+            feel_finished = FindObjectOfType<Feel>().GetFeel();
         }
 
         if(feel_finished)
@@ -62,6 +62,7 @@ public class Movement : MonoBehaviour
             if(xPosition - lastXPosition < leftMove)
             {
                 transform.position += new Vector3(-1, 0, 0);
+                FindObjectOfType<SFX>().Fall();
                 if(!ValidMove())
                     transform.position += new Vector3(1, 0, 0);
                 lastXPosition = xPosition;
@@ -69,6 +70,7 @@ public class Movement : MonoBehaviour
             else if(xPosition - lastXPosition > rightMove)
             {
                 transform.position += new Vector3(1, 0, 0);
+                FindObjectOfType<SFX>().Fall();
                 if(!ValidMove())
                     transform.position += new Vector3(-1, 0, 0);
                 lastXPosition = xPosition;
@@ -77,6 +79,7 @@ public class Movement : MonoBehaviour
             else if(meRotation - lastRotation > 90)
             {
                 transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0, 1, 0), 90);
+                FindObjectOfType<SFX>().Fall();
                     if(!ValidMove())
                         transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0, -1, 0), 90);
                 lastRotation = meRotation;
@@ -84,16 +87,14 @@ public class Movement : MonoBehaviour
             else if(meRotation - lastRotation < -90)
             {
                 transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0, 1, 0), -90);
+                FindObjectOfType<SFX>().Fall();
                     if(!ValidMove())
                         transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0, -1, 0), -90);
                 lastRotation = meRotation;
             }
 
-            
-            //if(Time.time - previousTime > (Input.GetKey(KeyCode.DownArrow) ? fallTime / 10 : fallTime))
-            //if(Time.time - previousTime > ((zPosition - lastZPosition > fallmove) ? fallTime / 10 : fallTime))
-            //else if(zPosition - lastZPosition > fallMove)
-            if (zPosition - lastZPosition > rightMove)
+            //if(Time.time - previousTime < ((zPosition - lastZPosition < fallMove) ? fallTime / 10 : fallTime))
+            if(zPosition - lastZPosition < fallMove)
             {
                 transform.position += new Vector3 (0, 0, -1);
                 FindObjectOfType<SFX>().Fall();
@@ -107,9 +108,10 @@ public class Movement : MonoBehaviour
                     FindObjectOfType<Spawn>().NewPiece();
                 }
 
-                previousTime = Time.time;
+                //previousTime = Time.time;
                 lastZPosition = zPosition;
             }
+
         }
         
 
