@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 public class Feel : MonoBehaviour
 {
-    private SpeechOut speechOut;
-    int CurrentNode = 0;
+    private SpeechOut speechOut = new SpeechOut();
+    static int CurrentNode = 0;
     public static GameObject[] outline;
     public static GameObject L_Shape;
     public static GameObject lehandle;
@@ -37,23 +37,22 @@ public class Feel : MonoBehaviour
 
      async public Task feel_outline()
     {
-        string news = tag_string + "_child";
-        outline = GameObject.FindGameObjectsWithTag(news);
-        print(outline[0].tag);
+        UpperHandle upperHandle = GameObject.Find("Panto").GetComponent<UpperHandle>();
+        outline = GameObject.FindGameObjectsWithTag(tag_string + "_child");
         lehandle = GameObject.FindGameObjectWithTag("MeHandle");
-        await upperHandle.SwitchTo(outline[0]);
-
+        //await upperHandle.SwitchTo(outline[0]);
+        
         float dist = Vector3.Distance(outline[CurrentNode].transform.position, lehandle.transform.position);
-
+        print(lehandle.transform.position);
         if (dist > threshold)
         {
-            await upperHandle.SwitchTo(outline[CurrentNode]); //= Vector3.Lerp(startPosition, CurrentPositionHolder, Timer);
+            await upperHandle.SwitchTo(outline[CurrentNode]); //= Vector3.
         }
         else
         {
             if (CurrentNode < outline.Length - 1)
             {
-                CurrentNode++;
+                CurrentNode = CurrentNode + 1;
             }
             else
             {
@@ -62,7 +61,6 @@ public class Feel : MonoBehaviour
             }
 
         }
-
 
     }
 
@@ -85,4 +83,3 @@ public class Feel : MonoBehaviour
     }
 
 }
-
