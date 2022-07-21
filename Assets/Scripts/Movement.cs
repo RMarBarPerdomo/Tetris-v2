@@ -98,6 +98,7 @@ public class Movement : MonoBehaviour
                     this.enabled = false;
                     AddToGrid();
                     CheckLines();
+                    RemoveChildren();
                     FindObjectOfType<Spawn>().NewPiece();
                 }
 
@@ -108,6 +109,14 @@ public class Movement : MonoBehaviour
         }
         
 
+    }
+    
+    void RemoveChildren(){
+        foreach (Transform child in transform)
+        {
+            if(child.tag == tag + "_child")
+                Destroy(child.gameObject);
+        }
     }
 
     bool HasLine(int i)
