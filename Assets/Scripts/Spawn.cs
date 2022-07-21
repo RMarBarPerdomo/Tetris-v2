@@ -15,12 +15,6 @@ public class Spawn : MonoBehaviour
     // Start is called before the first frame update
     async void Start()
     {   
-        /*pantoColliders = GameObject.FindObjectsOfType<PantoCollider>();
-        foreach (PantoCollider collider in pantoColliders)
-        {
-            collider.CreateObstacle();
-            collider.Enable();
-        }*/
 
         speechOut = new SpeechOut();
         LowerHandle lowerHandle;

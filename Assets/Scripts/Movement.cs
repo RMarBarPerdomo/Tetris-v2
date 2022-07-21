@@ -30,11 +30,6 @@ public class Movement : MonoBehaviour
         FindObjectOfType<Feel>().SetTag(gameObject.tag);
         feel_finished = FindObjectOfType<Feel>().GetFeel();
 
-        for(int i = 0; i < width; i++){
-            for(int j = 0; j < height; j++)
-                print(grid[i, j].transform.position);
-        }
-
     }
 
 
@@ -59,9 +54,6 @@ public class Movement : MonoBehaviour
             float xPosition = handlePosition.x;
             float meRotation = upperHandle.GetRotation();
 
-            
-            
-            // Movements not needed for this version of level 1, do not delete
             if(xPosition - lastXPosition < leftMove)
             {
                 transform.position += new Vector3(-1, 0, 0);
@@ -78,7 +70,6 @@ public class Movement : MonoBehaviour
                     transform.position += new Vector3(-1, 0, 0);
                 lastXPosition = xPosition;
             }
-            //else if(Input.GetKeyDown(KeyCode.UpArrow))
             else if(meRotation - lastRotation > 90)
             {
                 transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0, 1, 0), 90);
@@ -96,8 +87,7 @@ public class Movement : MonoBehaviour
                 lastRotation = meRotation;
             }
 
-            //if(Time.time - previousTime > ((zPosition - lastZPosition < fallMove) ? fallTime / 10 : fallTime))
-            if(zPosition - lastZPosition < fallMove)
+            if(Time.time - previousTime > ((zPosition - lastZPosition < fallMove) ? fallTime / 10 : fallTime))
             {
                 transform.position += new Vector3 (0, 0, -1);
                 FindObjectOfType<SFX>().Fall();
@@ -106,8 +96,8 @@ public class Movement : MonoBehaviour
                 {
                     transform.position += new Vector3(0, 0, 1);
                     this.enabled = false;
-                    //AddToGrid();
-                    //CheckLines();
+                    AddToGrid();
+                    CheckLines();
                     FindObjectOfType<Spawn>().NewPiece();
                 }
 
@@ -174,9 +164,9 @@ public class Movement : MonoBehaviour
         foreach(Transform children in transform)
         {
             int roundedX = Mathf.RoundToInt(children.transform.position.x);
-            int roundedZ = Mathf.RoundToInt(children.transform.position.z);
+            int roundedZ = Mathf.RoundToInt(children.transform.position.z - 0.5f);
 
-            grid[roundedX, roundedZ] = children;
+            grid[roundedX + 5, roundedZ + 29] = children;
         }
     }
 
@@ -192,8 +182,8 @@ public class Movement : MonoBehaviour
                 return false;
             }
 
-            //if(grid[roundedX, roundedZ] != null)
-                //return false;
+            if(grid[roundedX + 5, roundedZ + 29] != null)
+                return false;
 
         }
 
