@@ -1,9 +1,11 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DualPantoFramework;
 using SpeechIO;
 using System.Threading.Tasks;
+using System;
+
 
 public class Feel : MonoBehaviour
 {
@@ -11,20 +13,20 @@ public class Feel : MonoBehaviour
     static int CurrentNode = 0;
     public static GameObject[] outline;
     public static GameObject L_Shape;
-    public static GameObject lehandle;
+    //public static GameObject lehandle;
     float threshold = 0.1f;
     static GameObject CurrentPositionHolder;
     static bool feel_finished = false;
     public static int fallmove = 25;
     public static UpperHandle upperHandle;
     string tag_string;
-
+    
     //public AudioSource clear;
     //public AudioSource fall;
 
     // Start is called before the first frame update
 
-    
+
 
 
     // Update is called once per frame
@@ -32,21 +34,22 @@ public class Feel : MonoBehaviour
     async void OnTriggerEnter()
     {
         await speechOut.Speak("now feel how the block is moving");
+        CurrentNode = outline.Length;
     }
 
 
-     async public Task feel_outline()
+    async public Task feel_outline()
     {
         UpperHandle upperHandle = GameObject.Find("Panto").GetComponent<UpperHandle>();
         outline = GameObject.FindGameObjectsWithTag(tag_string + "_child");
-        lehandle = GameObject.FindGameObjectWithTag("MeHandle");
-        //await upperHandle.SwitchTo(outline[0]);
-        
-        float dist = Vector3.Distance(outline[CurrentNode].transform.position, lehandle.transform.position);
-        print(lehandle.transform.position);
+        //lehandle = GameObject.FindGameObjectWithTag("MeHandle");
+        Vector3 handlePosition = upperHandle.GetPosition();
+
+
+        float dist = Vector3.Distance(outline[CurrentNode].transform.position, handlePosition);
         if (dist > threshold)
         {
-            await upperHandle.SwitchTo(outline[CurrentNode]); //= Vector3.
+            await upperHandle.SwitchTo(outline[CurrentNode]); 
         }
         else
         {
@@ -62,9 +65,7 @@ public class Feel : MonoBehaviour
             }
 
         }
-
         upperHandle.Free();
-
     }
 
     public void SetFeelOutLine_true()
