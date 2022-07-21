@@ -13,16 +13,14 @@ public class Movement : MonoBehaviour
     public static int height = 20;
     public static int width = 10;
     private static Transform[,] grid = new Transform[width, height];
-    static int pieceNumber;
     private SpeechOut speechOut;
-    private bool gameStarted;
     Vector3 handlePosition;
     public static int fallMove = -1;
     public static int leftMove = -1;
     public static int rightMove = 1;
     public static bool feel_finished;
     float lastRotation = 0;
-    float lastZPosition = 15;
+    float lastZPosition = -12;
     float lastXPosition = 0;
 
     // Start is called before the first frame update
@@ -31,7 +29,12 @@ public class Movement : MonoBehaviour
         UpperHandle upperHandle =  GameObject.Find("Panto").GetComponent<UpperHandle>();   
         FindObjectOfType<Feel>().SetTag(gameObject.tag);
         feel_finished = FindObjectOfType<Feel>().GetFeel();
-        lastZPosition = 16;
+
+        for(int i = 0; i < width; i++){
+            for(int j = 0; j < height; j++)
+                print(grid[i, j].transform.position);
+        }
+
     }
 
 
@@ -93,8 +96,8 @@ public class Movement : MonoBehaviour
                 lastRotation = meRotation;
             }
 
-            if(Time.time - previousTime > ((zPosition - lastZPosition < fallMove) ? fallTime / 10 : fallTime))
-            //if(zPosition - lastZPosition < fallMove)
+            //if(Time.time - previousTime > ((zPosition - lastZPosition < fallMove) ? fallTime / 10 : fallTime))
+            if(zPosition - lastZPosition < fallMove)
             {
                 transform.position += new Vector3 (0, 0, -1);
                 FindObjectOfType<SFX>().Fall();
@@ -103,12 +106,11 @@ public class Movement : MonoBehaviour
                 {
                     transform.position += new Vector3(0, 0, 1);
                     this.enabled = false;
-                    AddToGrid();
-                    CheckLines();
+                    //AddToGrid();
+                    //CheckLines();
                     FindObjectOfType<Spawn>().NewPiece();
                 }
 
-                //previousTime = Time.time;
                 lastZPosition = zPosition;
                 previousTime = Time.time;
             }
@@ -126,7 +128,6 @@ public class Movement : MonoBehaviour
                 return false;
         }
 
-        //clear.Play();
         FindObjectOfType<SFX>().Clear();
         return true;
     }
@@ -186,13 +187,13 @@ public class Movement : MonoBehaviour
             int roundedX = Mathf.RoundToInt(children.transform.position.x);
             int roundedZ = Mathf.RoundToInt(children.transform.position.z);
 
-            if(roundedX < 0 || roundedZ < 0 || roundedX >= width || roundedZ >= height)
+            if(roundedX < -5 || roundedZ < -29 || roundedX >= 5 || roundedZ >= -8)
             {
                 return false;
             }
 
-            if(grid[roundedX, roundedZ] != null)
-                return false;
+            //if(grid[roundedX, roundedZ] != null)
+                //return false;
 
         }
 
