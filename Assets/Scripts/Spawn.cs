@@ -26,7 +26,7 @@ public class Spawn : MonoBehaviour
     // Update is called once per frame
     public void NewPiece()
     {   
-            Instantiate(Pieces[0], transform.position, Quaternion.identity);
+            Instantiate(Pieces[Random.Range(0, Pieces.Length)], transform.position, Quaternion.identity);
             FindObjectOfType<Feel>().SetFeelOutLine_false();
             
             //Random.Range(0, Pieces.Length)

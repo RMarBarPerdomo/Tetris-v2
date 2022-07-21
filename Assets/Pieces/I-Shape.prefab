@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1458253510859546475}
   m_Layer: 0
   m_Name: I-Shape
-  m_TagString: l_shape
+  m_TagString: i_shape
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -179,7 +179,7 @@ GameObject:
   - component: {fileID: 9187462083612226121}
   m_Layer: 0
   m_Name: child_2
-  m_TagString: l_shape_child
+  m_TagString: i_shape_child
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -274,7 +274,7 @@ GameObject:
   - component: {fileID: 415510370536960976}
   m_Layer: 0
   m_Name: child_3
-  m_TagString: l_shape_child
+  m_TagString: i_shape_child
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -591,7 +591,7 @@ GameObject:
   - component: {fileID: 3924802167408405590}
   m_Layer: 0
   m_Name: child_4
-  m_TagString: l_shape_child
+  m_TagString: i_shape_child
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -686,7 +686,7 @@ GameObject:
   - component: {fileID: 8479437423377680265}
   m_Layer: 0
   m_Name: child_5
-  m_TagString: l_shape_child
+  m_TagString: i_shape_child
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -781,7 +781,7 @@ GameObject:
   - component: {fileID: 2933771393328068992}
   m_Layer: 0
   m_Name: child_1
-  m_TagString: l_shape_child
+  m_TagString: i_shape_child
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

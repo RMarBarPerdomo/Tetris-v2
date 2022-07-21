@@ -6,6 +6,18 @@ TagManager:
   tags:
   - l_shape
   - l_shape_child
+  - j_shape_child
+  - j_shape
+  - i_shape
+  - i_shape_child
+  - o_shape
+  - o_shape_child
+  - s_shape
+  - s_shape_child
+  - t_shape
+  - t_shape_child
+  - z_shape
+  - z_shape_child
   layers:
   - Default
   - TransparentFX

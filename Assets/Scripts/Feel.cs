@@ -12,7 +12,6 @@ public class Feel : MonoBehaviour
     private SpeechOut speechOut = new SpeechOut();
     static int CurrentNode = 0;
     public static GameObject[] outline;
-    public static GameObject L_Shape;
     //public static GameObject lehandle;
     float threshold = 0.1f;
     static GameObject CurrentPositionHolder;
@@ -20,31 +19,27 @@ public class Feel : MonoBehaviour
     public static int fallmove = 25;
     public static UpperHandle upperHandle;
     string tag_string;
-    
-    //public AudioSource clear;
-    //public AudioSource fall;
-
-    // Start is called before the first frame update
-
-
-
-
-    // Update is called once per frame
 
     async void OnTriggerEnter()
     {
         await speechOut.Speak("now feel how the block is moving");
-        CurrentNode = outline.Length;
+        foreach(Transform children in transform)
+        {
+            if(children.tag == tag_string + "_child")
+                Destroy(children);
+        }
+        CurrentNode = 0;
     }
 
 
     async public Task feel_outline()
     {
+        outline = new GameObject[20];
         UpperHandle upperHandle = GameObject.Find("Panto").GetComponent<UpperHandle>();
         outline = GameObject.FindGameObjectsWithTag(tag_string + "_child");
         //lehandle = GameObject.FindGameObjectWithTag("MeHandle");
         Vector3 handlePosition = upperHandle.GetPosition();
-
+        print(outline.Length);
 
         float dist = Vector3.Distance(outline[CurrentNode].transform.position, handlePosition);
         if (dist > threshold)
