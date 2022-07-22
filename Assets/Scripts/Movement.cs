@@ -4,6 +4,7 @@ using UnityEngine;
 using DualPantoFramework;
 using SpeechIO;
 using System.Threading.Tasks;
+using UnityEngine.SceneManagement;
 
 public class Movement : MonoBehaviour
 {
@@ -24,14 +25,36 @@ public class Movement : MonoBehaviour
     float lastZPosition = -12;
     float lastXPosition = 0;
 
+
+    private Scene scene;
+    public bool rotateFinished = true;
+    public int rotateIndex;
+    public int rotateTo;
+    private GameObject pos;
+    private int count = 0;
+    bool is_level_finished = false;
+    bool ready = false;
+    int enough = 0;
+    bool valuesSet = false;
+
     // Start is called before the first frame update
     async void Start()
     {
-        UpperHandle upperHandle =  GameObject.Find("Panto").GetComponent<UpperHandle>();   
+
+        UpperHandle upperHandle = GameObject.Find("Panto").GetComponent<UpperHandle>();
         FindObjectOfType<Feel>().SetTag(gameObject.tag);
         feel_finished = FindObjectOfType<Feel>().GetFeel();
+
+        // if speechIn active the game stops working when finishing feel handle doesn't move afterwards
         speechIn = new SpeechIn(onSpeechRecognized);
-        speechIn.StartListening();
+        //speechIn.StartListening();
+
+        rotateIndex = 0;
+        ready = false;
+        scene = SceneManager.GetActiveScene();
+        pos = new GameObject();
+        speechOut = new SpeechOut();
+        is_level_finished = false;
     }
 
 
@@ -39,90 +62,188 @@ public class Movement : MonoBehaviour
     // Update is called once per frame
     async void Update()
     {
-        
+        // feel outline of block
         if (!feel_finished)
         {
             await FindObjectOfType<Feel>().feel_outline();
             feel_finished = FindObjectOfType<Feel>().GetFeel();
         }
+        
+        // Level_1
+        if (scene.name == "Level_1" && !is_level_finished && feel_finished)
+            await Level_1();
 
-        if(feel_finished)
-        {
-            
-            UpperHandle upperHandle =  GameObject.Find("Panto").GetComponent<UpperHandle>();
+        // Level_2
+        if (scene.name == "Level_2" && !is_level_finished && feel_finished)
+            await Level_2();
 
-            Vector3 handlePosition = upperHandle.GetPosition();
-            float zPosition = handlePosition.z;
-            float xPosition = handlePosition.x;
-            float meRotation = upperHandle.GetRotation();
-
-            if(xPosition - lastXPosition < leftMove)
-            {
-                transform.position += new Vector3(-1, 0, 0);
-                FindObjectOfType<SFX>().Fall();
-                if(!ValidMove())
-                    transform.position += new Vector3(1, 0, 0);
-                lastXPosition = xPosition;
-            }
-            else if(xPosition - lastXPosition > rightMove)
-            {
-                transform.position += new Vector3(1, 0, 0);
-                FindObjectOfType<SFX>().Fall();
-                if(!ValidMove())
-                    transform.position += new Vector3(-1, 0, 0);
-                lastXPosition = xPosition;
-            }
-            else if(meRotation - lastRotation > 90)
-            {
-                transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0, 1, 0), 90);
-                FindObjectOfType<SFX>().Fall();
-                    if(!ValidMove())
-                        transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0, -1, 0), 90);
-                lastRotation = meRotation;
-            }
-            else if(meRotation - lastRotation < -90)
-            {
-                transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0, 1, 0), -90);
-                FindObjectOfType<SFX>().Fall();
-                    if(!ValidMove())
-                        transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0, -1, 0), -90);
-                lastRotation = meRotation;
-            }
-
-            if(Time.time - previousTime > ((zPosition - lastZPosition < fallMove) ? fallTime / 10 : fallTime))
-            {
-                transform.position += new Vector3 (0, 0, -1);
-                FindObjectOfType<SFX>().Fall();
-
-                if(!ValidMove())
-                {
-                    transform.position += new Vector3(0, 0, 1);
-                    speechIn.StopListening();
-                    this.enabled = false;
-                    AddToGrid();
-                    CheckLines();
-                    FindObjectOfType<Spawn>().NewPiece();
-                    RemoveChildren();
-                }
-
-                lastZPosition = zPosition;
-                previousTime = Time.time;
-            }
-
-        }
+        // Level_3
+        if (scene.name == "Level_3" && !is_level_finished && feel_finished)
+            await Level_3();
         
 
+        // main movement
+       
+        if (feel_finished && ready)
+        {
+            if (!valuesSet)
+                setValues();
+            await movement();
+        }
+
+
+
     }
 
-    async void onSpeechRecognized(string command) {
-        if (command == "Feel") 
-        {
-            FindObjectOfType<Feel>().GetFeel(); 
-            FindObjectOfType<Feel>().feel_outline();
-            FindObjectOfType<Feel>().GetFeel();
-        } 
+    public void setValues()
+    {
+        UpperHandle upperHandle = GameObject.Find("Panto").GetComponent<UpperHandle>();
+        Vector3 handlePosition = upperHandle.GetPosition();
+        lastXPosition = handlePosition.x;
+        lastZPosition = handlePosition.z;
+        valuesSet = true;
     }
-    
+    async Task Level_1()
+    {
+        is_level_finished = true;
+        UpperHandle upperHandle = GameObject.Find("Panto").GetComponent<UpperHandle>();
+        Vector3 handlePosition = upperHandle.GetPosition();
+        pos.transform.position = new Vector3(handlePosition.x,0, handlePosition.z);
+        await upperHandle.SwitchTo(pos);
+        await speechOut.Speak("Place the block like this");
+        pos.transform.position = new Vector3(handlePosition.x, 0, -28);
+        await upperHandle.SwitchTo(pos);
+        pos.transform.position = new Vector3(handlePosition.x, 0, -10);
+        await speechOut.Speak("try it out");
+        await upperHandle.SwitchTo(pos);
+        ready = true;
+        upperHandle.Free();
+
+    }
+
+    async Task Level_2()
+    {
+        UpperHandle upperHandle = GameObject.Find("Panto").GetComponent<UpperHandle>();
+        Vector3 handlePosition = upperHandle.GetPosition();
+        is_level_finished = true;
+        pos.transform.position = handlePosition + Vector3.left + Vector3.left;
+        await speechOut.Speak("Move the block to the left like this");
+        await upperHandle.SwitchTo(pos, 5);
+        transform.position += new Vector3(-1, 0, 0);
+        pos.transform.position += Vector3.right + Vector3.right;
+        await upperHandle.SwitchTo(pos, 5);
+        transform.position += new Vector3(1, 0, 0);
+
+        await speechOut.Speak("Move the block to the right like this");
+        pos.transform.position = handlePosition + Vector3.right;
+        transform.position += new Vector3(1, 0, 0);
+        await upperHandle.SwitchTo(pos, 5);
+        pos.transform.position += Vector3.left + Vector3.left;
+        await upperHandle.SwitchTo(pos, 5);
+        transform.position += new Vector3(-1, 0, 0);
+        ready = true;
+        upperHandle.Free();
+    }
+
+    async Task Level_3()
+    {
+        is_level_finished = true;
+        UpperHandle upperHandle = GameObject.Find("Panto").GetComponent<UpperHandle>();
+        float meRotation = upperHandle.GetRotation();
+        rotateFinished = false;
+        rotateTo = 1;
+        transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0, 1, 0), -90);
+        await speechOut.Speak("Rotate the block to the left like this");
+
+        rotateTo = -1;
+        transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0, 1, 0), 90);
+        await speechOut.Speak("Rotate the block to the right like this");
+
+        ready = true;
+        upperHandle.Free();
+    }
+
+    async Task movement()
+    {
+        UpperHandle upperHandle = GameObject.Find("Panto").GetComponent<UpperHandle>();
+        Vector3 handlePosition = upperHandle.GetPosition();
+        float zPosition = handlePosition.z;
+        float xPosition = handlePosition.x;
+        float meRotation = upperHandle.GetRotation();
+
+
+
+
+
+
+        if (xPosition - lastXPosition < leftMove)
+        {
+            transform.position += new Vector3(-1, 0, 0);
+            FindObjectOfType<SFX>().Fall();
+            if (!ValidMove())
+                transform.position += new Vector3(1, 0, 0);
+            lastXPosition = xPosition;
+        }
+        else if (xPosition - lastXPosition > rightMove)
+        {
+            transform.position += new Vector3(1, 0, 0);
+            FindObjectOfType<SFX>().Fall();
+            if (!ValidMove())
+                transform.position += new Vector3(-1, 0, 0);
+            lastXPosition = xPosition;
+        }
+        else if (meRotation - lastRotation > 90)
+        {
+
+            transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0, 1, 0), 90);
+            FindObjectOfType<SFX>().Fall();
+            if (!ValidMove())
+                transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0, -1, 0), 90);
+            lastRotation = meRotation;
+        }
+        else if (meRotation - lastRotation < -90)
+        {
+            transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0, 1, 0), -90);
+            FindObjectOfType<SFX>().Fall();
+            if (!ValidMove())
+                transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0, -1, 0), -90);
+            lastRotation = meRotation;
+        }
+
+        if (Time.time - previousTime > ((zPosition - lastZPosition < fallMove) ? fallTime / 10 : fallTime))
+        {
+            transform.position += new Vector3(0, 0, -1);
+            FindObjectOfType<SFX>().Fall();
+
+            if (!ValidMove())
+            {
+                transform.position += new Vector3(0, 0, 1);
+                this.enabled = false;
+                AddToGrid();
+                CheckLines();
+                RemoveChildren();
+                FindObjectOfType<Spawn>().NewPiece();
+            }
+
+            lastZPosition = zPosition;
+            previousTime = Time.time;
+        }
+    }
+
+    void FixedUpdate()
+    {
+        if (!rotateFinished)
+        {
+            UpperHandle upperHandle = GameObject.Find("Panto").GetComponent<UpperHandle>();
+            upperHandle.Rotate(rotateIndex);
+            if (rotateTo == 1 && rotateIndex < 100)
+                rotateIndex += 10;
+            if (rotateTo == -1 && rotateIndex > 0)
+                rotateIndex -= 10;
+        }
+        
+    }
+
     void RemoveChildren(){
         foreach (Transform child in transform)
         {
@@ -191,6 +312,16 @@ public class Movement : MonoBehaviour
         }
     }
 
+    async void onSpeechRecognized(string command)
+    {
+        if (command == "Feel")
+        {
+            FindObjectOfType<Feel>().GetFeel();
+            FindObjectOfType<Feel>().feel_outline();
+            FindObjectOfType<Feel>().GetFeel();
+        }
+    }
+
     bool ValidMove()
     {
         foreach(Transform children in transform)
@@ -210,10 +341,4 @@ public class Movement : MonoBehaviour
 
         return true;
     }
-
-    public void OnApplicationQuit()
-    {
-        speechIn.StopListening();
-    }
-
 }
