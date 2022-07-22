@@ -22,12 +22,7 @@ public class Feel : MonoBehaviour
 
     async void OnTriggerEnter()
     {
-        await speechOut.Speak("now feel how the block is moving");
-        foreach(Transform children in transform)
-        {
-            if(children.tag == tag_string + "_child")
-                Destroy(children);
-        }
+        
         CurrentNode = 0;
     }
 
