@@ -14,6 +14,7 @@ public class Movement : MonoBehaviour
     public static int width = 10;
     private static Transform[,] grid = new Transform[width, height];
     private SpeechOut speechOut;
+    SpeechIn speechIn;
     Vector3 handlePosition;
     public static int fallMove = -1;
     public static int leftMove = -1;
@@ -29,7 +30,8 @@ public class Movement : MonoBehaviour
         UpperHandle upperHandle =  GameObject.Find("Panto").GetComponent<UpperHandle>();   
         FindObjectOfType<Feel>().SetTag(gameObject.tag);
         feel_finished = FindObjectOfType<Feel>().GetFeel();
-
+        speechIn = new SpeechIn(onSpeechRecognized);
+        speechIn.StartListening();
     }
 
 
@@ -95,11 +97,12 @@ public class Movement : MonoBehaviour
                 if(!ValidMove())
                 {
                     transform.position += new Vector3(0, 0, 1);
+                    speechIn.StopListening();
                     this.enabled = false;
                     AddToGrid();
                     CheckLines();
-                    RemoveChildren();
                     FindObjectOfType<Spawn>().NewPiece();
+                    RemoveChildren();
                 }
 
                 lastZPosition = zPosition;
@@ -109,6 +112,15 @@ public class Movement : MonoBehaviour
         }
         
 
+    }
+
+    async void onSpeechRecognized(string command) {
+        if (command == "Feel") 
+        {
+            FindObjectOfType<Feel>().GetFeel(); 
+            FindObjectOfType<Feel>().feel_outline();
+            FindObjectOfType<Feel>().GetFeel();
+        } 
     }
     
     void RemoveChildren(){
@@ -198,4 +210,10 @@ public class Movement : MonoBehaviour
 
         return true;
     }
+
+    public void OnApplicationQuit()
+    {
+        speechIn.StopListening();
+    }
+
 }
