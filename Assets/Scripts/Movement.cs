@@ -24,6 +24,7 @@ public class Movement : MonoBehaviour
     float lastRotation = 0;
     float lastZPosition = -12;
     float lastXPosition = 0;
+    LowerHandle lowerHandle;
 
 
     private Scene scene;
@@ -42,8 +43,10 @@ public class Movement : MonoBehaviour
     {
 
         UpperHandle upperHandle = GameObject.Find("Panto").GetComponent<UpperHandle>();
+        LowerHandle lowerHandle = GameObject.Find("Panto").GetComponent<LowerHandle>();
         FindObjectOfType<Feel>().SetTag(gameObject.tag);
         feel_finished = FindObjectOfType<Feel>().GetFeel();
+        //speechOut.SetLanguage(SpeechBase.LANGUAGE.GERMAN);
 
         // if speechIn active the game stops working when finishing feel handle doesn't move afterwards
         speechIn = new SpeechIn(onSpeechRecognized);
@@ -91,13 +94,12 @@ public class Movement : MonoBehaviour
             await movement();
         }
 
-
-
     }
 
     public void setValues()
     {
         UpperHandle upperHandle = GameObject.Find("Panto").GetComponent<UpperHandle>();
+        LowerHandle lowerHandle = GameObject.Find("Panto").GetComponent<LowerHandle>();
         Vector3 handlePosition = upperHandle.GetPosition();
         lastXPosition = handlePosition.x;
         lastZPosition = handlePosition.z;
@@ -105,16 +107,20 @@ public class Movement : MonoBehaviour
     }
     async Task Level_1()
     {
+        
         is_level_finished = true;
         UpperHandle upperHandle = GameObject.Find("Panto").GetComponent<UpperHandle>();
+        LowerHandle lowerHandle = GameObject.Find("Panto").GetComponent<LowerHandle>();
         Vector3 handlePosition = upperHandle.GetPosition();
+        Vector3 ItPosition = new Vector3 (-1, 0, -28.5f);
         pos.transform.position = new Vector3(handlePosition.x,0, handlePosition.z);
         await upperHandle.SwitchTo(pos);
-        await speechOut.Speak("Place the block like this");
+        await speechOut.Speak("Bewege den Block nach unten so");
         pos.transform.position = new Vector3(handlePosition.x, 0, -28);
         await upperHandle.SwitchTo(pos);
         pos.transform.position = new Vector3(handlePosition.x, 0, -10);
-        await speechOut.Speak("try it out");
+        await speechOut.Speak("um die linien zu löschen");
+        await lowerHandle.MoveToPosition(ItPosition, 5.0f, false);
         await upperHandle.SwitchTo(pos);
         ready = true;
         upperHandle.Free();
@@ -124,23 +130,27 @@ public class Movement : MonoBehaviour
     async Task Level_2()
     {
         UpperHandle upperHandle = GameObject.Find("Panto").GetComponent<UpperHandle>();
+        LowerHandle lowerHandle = GameObject.Find("Panto").GetComponent<LowerHandle>();
         Vector3 handlePosition = upperHandle.GetPosition();
+        Vector3 ItPosition = new Vector3 (4, 0, -28.5f);
         is_level_finished = true;
         pos.transform.position = handlePosition + Vector3.left + Vector3.left;
-        await speechOut.Speak("Move the block to the left like this");
+        await speechOut.Speak("Bewege den Block nach Links so");
         await upperHandle.SwitchTo(pos, 5);
         transform.position += new Vector3(-1, 0, 0);
         pos.transform.position += Vector3.right + Vector3.right;
         await upperHandle.SwitchTo(pos, 5);
         transform.position += new Vector3(1, 0, 0);
 
-        await speechOut.Speak("Move the block to the right like this");
+        await speechOut.Speak("Bewege den Block nach Rechts so.");
         pos.transform.position = handlePosition + Vector3.right;
         transform.position += new Vector3(1, 0, 0);
         await upperHandle.SwitchTo(pos, 5);
         pos.transform.position += Vector3.left + Vector3.left;
         await upperHandle.SwitchTo(pos, 5);
         transform.position += new Vector3(-1, 0, 0);
+        await speechOut.Speak("Bewege den Block zur Lücke");
+        await lowerHandle.MoveToPosition(ItPosition, 5.0f, false);
         ready = true;
         upperHandle.Free();
     }
@@ -153,14 +163,20 @@ public class Movement : MonoBehaviour
         rotateFinished = false;
         rotateTo = 1;
         transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0, 1, 0), -90);
-        await speechOut.Speak("Rotate the block to the left like this");
+        await speechOut.Speak("Rotiere den Block nach Rechts so");
 
         rotateTo = -1;
         transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0, 1, 0), 90);
-        await speechOut.Speak("Rotate the block to the right like this");
+        await speechOut.Speak("Rotiere den Block nach Links so");
 
         ready = true;
         upperHandle.Free();
+    }
+
+    async Task Level_4()
+    {
+        await speechOut.Speak("Probiere das Spiel aus");
+        ready = true;
     }
 
     async Task movement()
@@ -221,7 +237,22 @@ public class Movement : MonoBehaviour
                 this.enabled = false;
                 AddToGrid();
                 CheckLines();
+                
+                if(scene.name == "Level_1")
+                    FindObjectOfType<SFX>().Clear();
+                if(scene.name == "Level_2")
+                    FindObjectOfType<SFX>().Clear();
+
                 RemoveChildren();
+                if(scene.name == "Level_1")
+                    SceneManager.LoadScene("Level_2", LoadSceneMode.Single);
+
+                if(scene.name == "Levle_2")
+                    SceneManager.LoadScene("Level_3", LoadSceneMode.Single);
+                
+                if(scene.name == "Levle_3")
+                    SceneManager.LoadScene("Level_4", LoadSceneMode.Single);
+
                 FindObjectOfType<Spawn>().NewPiece();
             }
 

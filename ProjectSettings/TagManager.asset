@@ -18,6 +18,7 @@ TagManager:
   - t_shape_child
   - z_shape
   - z_shape_child
+  - ItPosition
   layers:
   - Default
   - TransparentFX

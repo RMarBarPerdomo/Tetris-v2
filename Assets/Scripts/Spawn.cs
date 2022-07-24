@@ -27,7 +27,7 @@ public class Spawn : MonoBehaviour
     public void NewPiece()
     {   
             //Random.Range(0, Pieces.Length)
-            Instantiate(Pieces[2], transform.position, Quaternion.identity);
+            Instantiate(Pieces[Random.Range(0, Pieces.Length)], transform.position, Quaternion.identity);
             FindObjectOfType<Feel>().SetFeelOutLine_false();
             
             //Random.Range(0, Pieces.Length)
