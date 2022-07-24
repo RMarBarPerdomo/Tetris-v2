@@ -46,7 +46,7 @@ public class Movement : MonoBehaviour
         LowerHandle lowerHandle = GameObject.Find("Panto").GetComponent<LowerHandle>();
         FindObjectOfType<Feel>().SetTag(gameObject.tag);
         feel_finished = FindObjectOfType<Feel>().GetFeel();
-        //speechOut.SetLanguage(SpeechBase.LANGUAGE.GERMAN);
+        speechOut.SetLanguage(SpeechBase.LANGUAGE.GERMAN);
 
         // if speechIn active the game stops working when finishing feel handle doesn't move afterwards
         speechIn = new SpeechIn(onSpeechRecognized);
@@ -83,6 +83,9 @@ public class Movement : MonoBehaviour
         // Level_3
         if (scene.name == "Level_3" && !is_level_finished && feel_finished)
             await Level_3();
+
+        if (scene.name == "Level_4" && !is_level_finished && feel_finished)
+            await Level_4();
         
 
         // main movement
