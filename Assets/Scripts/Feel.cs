@@ -19,6 +19,7 @@ public class Feel : MonoBehaviour
     public static int fallmove = 25;
     public static UpperHandle upperHandle;
     string tag_string;
+    bool nowSet = true;
 
     async void OnTriggerEnter()
     {
@@ -29,12 +30,21 @@ public class Feel : MonoBehaviour
 
     async public Task feel_outline()
     {
+
+
+
         outline = new GameObject[20];
         UpperHandle upperHandle = GameObject.Find("Panto").GetComponent<UpperHandle>();
         outline = GameObject.FindGameObjectsWithTag(tag_string + "_child");
         //lehandle = GameObject.FindGameObjectWithTag("MeHandle");
         Vector3 handlePosition = upperHandle.GetPosition();
         print(outline.Length);
+
+
+        Array.Sort(outline, CompareObNames);
+
+
+        
 
         float dist = Vector3.Distance(outline[CurrentNode].transform.position, handlePosition);
         if (dist > threshold)
@@ -46,6 +56,7 @@ public class Feel : MonoBehaviour
             if (CurrentNode < outline.Length - 1)
             {
                 CurrentNode = CurrentNode + 1;
+                
             }
             else
             {
@@ -74,6 +85,10 @@ public class Feel : MonoBehaviour
 
     public bool GetFeel(){
         return feel_finished;
+    }
+    int CompareObNames(GameObject x, GameObject y)
+    {
+        return x.name.CompareTo(y.name);
     }
 
 }
