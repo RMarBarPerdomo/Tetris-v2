@@ -44,6 +44,7 @@ public class Movement : MonoBehaviour
 
         UpperHandle upperHandle = GameObject.Find("Panto").GetComponent<UpperHandle>();
         LowerHandle lowerHandle = GameObject.Find("Panto").GetComponent<LowerHandle>();
+        speechOut = new SpeechOut();
         FindObjectOfType<Feel>().SetTag(gameObject.tag);
         feel_finished = FindObjectOfType<Feel>().GetFeel();
         speechOut.SetLanguage(SpeechBase.LANGUAGE.GERMAN);
@@ -56,7 +57,6 @@ public class Movement : MonoBehaviour
         ready = false;
         scene = SceneManager.GetActiveScene();
         pos = new GameObject();
-        speechOut = new SpeechOut();
         is_level_finished = false;
     }
 
@@ -178,7 +178,7 @@ public class Movement : MonoBehaviour
 
     async Task Level_4()
     {
-        await speechOut.Speak("Probiere das Spiel aus");
+        await speechOut.Speak("Fühle die Blocke auf dem Boden mit dem unterem Handle, nachdem du sie plaziert hast. Versuche lange zu überleben.");
         ready = true;
     }
 
